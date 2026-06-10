@@ -1,0 +1,22 @@
+{
+  "package": "coolhand-cli",
+  "lastUpdated": "2026-06-10T01:48:12.667Z",
+  "weeks": [
+    {
+      "weekStart": "2026-05-11",
+      "downloads": 128
+    },
+    {
+      "weekStart": "2026-05-18",
+      "downloads": 20
+    },
+    {
+      "weekStart": "2026-05-25",
+      "downloads": 443
+    },
+    {
+      "weekStart": "2026-06-01",
+      "downloads": 29
+    }
+  ]
+}

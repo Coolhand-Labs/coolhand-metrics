@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>coolhand-cli — weekly npm downloads</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      max-width: 760px;
+      margin: 40px auto;
+      padding: 0 16px;
+      color: #1a1a1a;
+    }
+    h1 { font-size: 1.4rem; margin-bottom: 4px; }
+    .subtitle { color: #666; margin-top: 0; }
+    .big-number { font-size: 3.5rem; font-weight: 700; line-height: 1; margin: 24px 0 4px; }
+    .label { color: #666; font-size: 0.9rem; }
+    .change { font-size: 1.1rem; margin: 8px 0 24px; }
+    .up { color: #1a7f37; }
+    .down { color: #cf222e; }
+    .flat { color: #666; }
+    .updated { color: #999; font-size: 0.8rem; margin-top: 24px; }
+    .error { color: #cf222e; }
+    canvas { margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <h1>coolhand-cli</h1>
+  <p class="subtitle">Weekly npm downloads — a proxy for skill adoption. Updates daily.</p>
+
+  <div id="content">Loading…</div>
+
+  <canvas id="chart" height="160"></canvas>
+
+  <p class="updated" id="updated"></p>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <script>
+    async function render() {
+      const content = document.getElementById("content");
+      try {
+        const res = await fetch("./data.json", { cache: "no-store" });
+        if (!res.ok) throw new Error("could not load data.json");
+
+        const data = await res.json();
+        const weeks = data.weeks || [];
+        if (weeks.length === 0) {
+          content.innerHTML = '<p class="error">No download data yet.</p>';
+          return;
+        }
+
+        const latest = weeks[weeks.length - 1];
+        const previous = weeks.length > 1 ? weeks[weeks.length - 2] : null;
+
+        let changeHtml = "";
+        if (previous && previous.downloads > 0) {
+          const pct = ((latest.downloads - previous.downloads) / previous.downloads) * 100;
+          const rounded = Math.round(pct * 10) / 10;
+          const cls = rounded > 0 ? "up" : rounded < 0 ? "down" : "flat";
+          const arrow = rounded > 0 ? "▲" : rounded < 0 ? "▼" : "→";
+          changeHtml =
+            '<p class="change ' + cls + '">' + arrow + " " +
+            Math.abs(rounded) + "% vs previous week</p>";
+        }
+
+        content.innerHTML =
+          '<div class="big-number">' + latest.downloads.toLocaleString() + "</div>" +
+          '<div class="label">downloads in the week of ' + latest.weekStart + "</div>" +
+          changeHtml;
+
+        document.getElementById("updated").textContent =
+          "Last updated: " + new Date(data.lastUpdated).toLocaleString();
+
+        new Chart(document.getElementById("chart"), {
+          type: "line",
+          data: {
+            labels: weeks.map(function (w) { return w.weekStart; }),
+            datasets: [{
+              label: "Weekly downloads",
+              data: weeks.map(function (w) { return w.downloads; }),
+              borderColor: "#1a7f37",
+              backgroundColor: "rgba(26,127,55,0.1)",
+              fill: true,
+              tension: 0.2,
+            }],
+          },
+          options: {
+            scales: { y: { beginAtZero: true } },
+            plugins: { legend: { display: false } },
+          },
+        });
+      } catch (err) {
+        content.innerHTML = '<p class="error">Failed to load data: ' + err.message + "</p>";
+      }
+    }
+    render();
+  </script>
+</body>
+</html>
