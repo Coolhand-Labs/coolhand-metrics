@@ -6,105 +6,157 @@
   <title>coolhand-cli — npm download metrics</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
+    /* ===== Terminal Green theme (GitHub dark + terminal green) ===== */
     :root {
-      --bg: #f4f6fb;
-      --card: #ffffff;
-      --ink: #0f1729;
-      --muted: #64748b;
-      --line: #e6e9f0;
-      --accent: #4f46e5;
-      --up: #0b9b5b;
-      --up-soft: rgba(11, 155, 91, .12);
-      --down: #dc2626;
-      --down-soft: rgba(220, 38, 38, .10);
-      --shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 8px 24px rgba(16, 24, 40, .06);
+      --bg: #0d1117;
+      --panel: #161b22;
+      --panel-2: #1c2129;
+      --line: #30363d;
+      --ink: #e6edf3;
+      --muted: #8b949e;
+      --green: #3fb950;
+      --green-dim: rgba(63, 185, 80, .14);
+      --red: #f85149;
+      --red-dim: rgba(248, 81, 73, .14);
+      --glow: 0 0 0 1px rgba(63,185,80,.18), 0 0 24px rgba(63,185,80,.10);
+      --type: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+      --h1: clamp(1.1rem, 2.4vw, 1.5rem);
+      --hero: clamp(3rem, 11vw, 6rem);
+      --stat: clamp(1.5rem, 4vw, 2.2rem);
     }
     * { box-sizing: border-box; }
+    html, body { overflow-x: hidden; }
     body {
       margin: 0;
       background: var(--bg);
       color: var(--ink);
-      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      font-family: var(--type);
+      line-height: 1.5;
       -webkit-font-smoothing: antialiased;
     }
-    .wrap { max-width: 920px; margin: 0 auto; padding: 40px 20px 56px; }
+    /* atmospheric layers: faint green glow + subtle scan lines */
+    body::before {
+      content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background: radial-gradient(1100px 460px at 50% -8%, rgba(63,185,80,.12), transparent 70%);
+    }
+    body::after {
+      content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 2;
+      background: repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0 1px, transparent 1px 3px);
+      opacity: .5;
+    }
+    .wrap { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: clamp(20px, 5vw, 48px) 18px 48px; }
 
-    header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 26px; flex-wrap: wrap; }
-    .title { display: flex; align-items: center; gap: 12px; }
-    .title h1 { font-size: 1.35rem; margin: 0; letter-spacing: -.01em; }
-    .npm-badge { background: #cb3837; color: #fff; font-weight: 700; font-size: .72rem; padding: 3px 7px; border-radius: 5px; }
-    .subtitle { margin: 3px 0 0; color: var(--muted); font-size: .9rem; }
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { text-decoration: underline; }
+    /* terminal window chrome */
+    .win { border: 1px solid var(--line); border-radius: 12px; background: linear-gradient(180deg, var(--panel), var(--bg)); box-shadow: 0 24px 60px rgba(0,0,0,.45); overflow: hidden; }
+    .win-bar { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.02); }
+    .lights { display: inline-flex; gap: 7px; }
+    .lights i { width: 11px; height: 11px; border-radius: 50%; display: block; }
+    .lights i:nth-child(1) { background: #ff5f56; }
+    .lights i:nth-child(2) { background: #ffbd2e; }
+    .lights i:nth-child(3) { background: #27c93f; }
+    .win-title { color: var(--muted); font-size: .78rem; letter-spacing: .02em; flex: 1; text-align: center; }
+    .npm-badge { background: #cb3837; color: #fff; font-weight: 700; font-size: .68rem; padding: 3px 7px; border-radius: 5px; }
+    .win-body { padding: clamp(18px, 4vw, 34px); }
 
-    .hero { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 28px; box-shadow: var(--shadow); margin-bottom: 18px; }
-    .eyebrow { color: var(--muted); font-size: .78rem; text-transform: uppercase; letter-spacing: .07em; font-weight: 600; margin: 0 0 10px; }
-    .big { font-size: 3.6rem; font-weight: 800; line-height: 1; letter-spacing: -.03em; }
-    .hero-sub { color: var(--muted); margin-top: 10px; font-size: .95rem; }
-    .pill { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: .9rem; padding: 6px 12px; border-radius: 999px; margin-top: 16px; }
-    .pill.up { color: var(--up); background: var(--up-soft); }
-    .pill.down { color: var(--down); background: var(--down-soft); }
-    .pill.flat { color: var(--muted); background: #eef1f6; }
+    .prompt { font-size: clamp(.78rem, 1.6vw, .95rem); color: var(--muted); margin-bottom: clamp(20px, 4vw, 34px); }
+    .prompt .sigil { color: var(--green); margin-right: 8px; }
+    .prompt .arg { color: var(--ink); }
+    .cursor { display: inline-block; width: 9px; height: 1.05em; background: var(--green); margin-left: 6px; vertical-align: text-bottom; animation: blink 1.1s steps(1) infinite; box-shadow: 0 0 8px var(--green); }
+    @keyframes blink { 50% { opacity: 0; } }
 
-    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin-bottom: 18px; }
-    .stat { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px; box-shadow: var(--shadow); }
-    .stat .k { color: var(--muted); font-size: .8rem; font-weight: 600; margin: 0 0 7px; }
-    .stat .v { font-size: 1.6rem; font-weight: 700; letter-spacing: -.02em; }
-    .stat .v small { font-size: .78rem; color: var(--muted); font-weight: 500; display: block; margin-top: 4px; }
+    /* hero */
+    .eyebrow { color: var(--muted); font-size: .72rem; text-transform: uppercase; letter-spacing: .18em; margin: 0 0 12px; }
+    .hero-num { font-size: var(--hero); font-weight: 800; line-height: .95; letter-spacing: -.02em; color: var(--green); text-shadow: 0 0 28px rgba(63,185,80,.45); }
+    .hero-sub { color: var(--muted); margin-top: 12px; font-size: .9rem; }
+    .pill { display: inline-flex; align-items: center; gap: 7px; font-weight: 600; font-size: .85rem; padding: 6px 12px; border-radius: 6px; margin-top: 16px; border: 1px solid transparent; }
+    .pill.up { color: var(--green); background: var(--green-dim); border-color: rgba(63,185,80,.3); }
+    .pill.down { color: var(--red); background: var(--red-dim); border-color: rgba(248,81,73,.3); }
+    .pill.flat { color: var(--muted); background: rgba(255,255,255,.05); }
 
-    .chart-card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 22px 22px 16px; box-shadow: var(--shadow); }
-    .chart-card h2 { font-size: 1rem; margin: 0 0 3px; }
-    .chart-card .hint { color: var(--muted); font-size: .82rem; margin: 0 0 14px; }
-    .chart-box { position: relative; height: 300px; }
+    /* stat grid */
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin: clamp(24px, 5vw, 38px) 0; }
+    .stat { border: 1px solid var(--line); border-radius: 10px; padding: 16px; background: var(--panel-2); position: relative; }
+    .stat::before { content: ""; position: absolute; left: 0; top: 12px; bottom: 12px; width: 2px; background: var(--green); border-radius: 2px; opacity: .55; }
+    .stat .k { color: var(--muted); font-size: .68rem; text-transform: uppercase; letter-spacing: .1em; margin: 0 0 8px; padding-left: 10px; }
+    .stat .v { font-size: var(--stat); font-weight: 700; letter-spacing: -.01em; padding-left: 10px; }
+    .stat .v small { display: block; font-size: .68rem; color: var(--muted); font-weight: 400; margin-top: 5px; letter-spacing: 0; }
 
-    footer { margin-top: 24px; color: var(--muted); font-size: .82rem; text-align: center; line-height: 1.7; }
-    .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--up); margin-right: 6px; vertical-align: middle; }
-    .state { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 40px; text-align: center; color: var(--muted); box-shadow: var(--shadow); }
-    .state.error { color: var(--down); }
+    /* chart */
+    .chart-card { border: 1px solid var(--line); border-radius: 10px; padding: 20px 20px 12px; background: var(--panel-2); }
+    .chart-card h2 { font-size: .85rem; font-weight: 600; margin: 0 0 2px; text-transform: uppercase; letter-spacing: .1em; color: var(--ink); }
+    .chart-card .hint { color: var(--muted); font-size: .74rem; margin: 0 0 16px; }
+    .chart-box { position: relative; height: clamp(220px, 34vh, 320px); }
+
+    footer { margin-top: 22px; color: var(--muted); font-size: .76rem; text-align: center; line-height: 1.8; }
+    footer a { color: var(--green); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+    .live { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--green); margin-right: 7px; box-shadow: 0 0 8px var(--green); animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 50% { opacity: .35; } }
+
+    .state { padding: 48px; text-align: center; color: var(--muted); }
+    .state.error { color: var(--red); }
+
+    /* reveal-on-enter */
+    .reveal { opacity: 0; transform: translateY(14px); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .2s !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <header>
-      <div class="title">
+    <div class="win">
+      <div class="win-bar">
+        <span class="lights"><i></i><i></i><i></i></span>
+        <span class="win-title">coolhand-cli — npm download metrics</span>
         <span class="npm-badge">npm</span>
-        <div>
-          <h1>coolhand-cli</h1>
-          <p class="subtitle">Weekly download metrics — a proxy for skill adoption.</p>
-        </div>
       </div>
-      <a href="https://www.npmjs.com/package/coolhand-cli" target="_blank" rel="noopener">View on npm →</a>
-    </header>
-
-    <div id="app"><div class="state">Loading metrics…</div></div>
-
-    <footer id="footer"></footer>
+      <div class="win-body">
+        <div class="prompt"><span class="sigil">$</span>coolhand stats --package <span class="arg">coolhand-cli</span> --weekly<span class="cursor"></span></div>
+        <main id="app"><div class="state">loading metrics…</div></main>
+        <footer id="footer"></footer>
+      </div>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
   <script>
-    function parseUTC(dateStr) {
-      return new Date(dateStr + "T00:00:00Z");
-    }
-    function fmtDay(dateStr) {
-      return parseUTC(dateStr).toLocaleDateString(undefined, { month: "short", day: "numeric", timeZone: "UTC" });
-    }
+    var REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    function parseUTC(s) { return new Date(s + "T00:00:00Z"); }
+    function fmtDay(s) { return parseUTC(s).toLocaleDateString(undefined, { month: "short", day: "numeric", timeZone: "UTC" }); }
     function fmtRange(weekStart) {
-      var start = parseUTC(weekStart);
-      var end = new Date(start);
+      var start = parseUTC(weekStart), end = new Date(start);
       end.setUTCDate(end.getUTCDate() + 6);
-      var opts = { month: "short", day: "numeric", timeZone: "UTC" };
-      return start.toLocaleDateString(undefined, opts) + " – " + end.toLocaleDateString(undefined, opts);
+      var o = { month: "short", day: "numeric", timeZone: "UTC" };
+      return start.toLocaleDateString(undefined, o) + " – " + end.toLocaleDateString(undefined, o);
     }
-    function num(n) {
-      return n.toLocaleString();
+    function num(n) { return n.toLocaleString(); }
+
+    // animated count-up; respects reduced motion
+    function countUp(el, to) {
+      if (REDUCED || to === 0) { el.textContent = num(to); return; }
+      var dur = 900, start = null;
+      function step(t) {
+        if (!start) start = t;
+        var p = Math.min((t - start) / dur, 1);
+        var eased = 1 - Math.pow(1 - p, 3); // easeOutCubic
+        el.textContent = num(Math.round(to * eased));
+        if (p < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
     }
 
     function statCard(key, value, sub) {
-      return '<div class="stat"><p class="k">' + key + '</p>' +
-             '<div class="v">' + value + (sub ? '<small>' + sub + '</small>' : '') + '</div></div>';
+      return '<div class="stat reveal"><p class="k">' + key + '</p>' +
+             '<div class="v"><span class="cu" data-to="' + value + '">0</span>' +
+             (sub ? '<small>' + sub + '</small>' : '') + '</div></div>';
     }
 
     async function render() {
@@ -120,14 +172,14 @@
           return;
         }
 
-        // --- metrics (all derived from the same weekly series, nothing invented) ---
+        // ---- metrics: all derived from the same weekly series, nothing invented ----
         var latest = weeks[weeks.length - 1];
         var previous = weeks.length > 1 ? weeks[weeks.length - 2] : null;
-        var total = weeks.reduce(function (sum, w) { return sum + w.downloads; }, 0);
+        var total = weeks.reduce(function (s, w) { return s + w.downloads; }, 0);
         var avg = Math.round(total / weeks.length);
-        var peak = weeks.reduce(function (best, w) { return w.downloads > best.downloads ? w : best; }, weeks[0]);
+        var peak = weeks.reduce(function (b, w) { return w.downloads > b.downloads ? w : b; }, weeks[0]);
 
-        // --- week-over-week pill ---
+        // ---- week-over-week ----
         var pill = "";
         if (previous && previous.downloads > 0) {
           var diff = latest.downloads - previous.downloads;
@@ -136,96 +188,117 @@
           var arrow = diff > 0 ? "▲" : diff < 0 ? "▼" : "—";
           var signed = (diff >= 0 ? "+" : "") + num(diff);
           pill = '<span class="pill ' + cls + '">' + arrow + " " + Math.abs(pct) + "% (" + signed + ") vs prior week</span>";
-        } else if (previous) {
-          pill = '<span class="pill flat">— no prior-week baseline</span>';
         }
 
-        // --- build the page ---
         app.innerHTML =
-          '<div class="hero">' +
-            '<p class="eyebrow">Downloads last complete week</p>' +
-            '<div class="big">' + num(latest.downloads) + '</div>' +
+          '<section class="hero reveal">' +
+            '<p class="eyebrow">// downloads · last complete week</p>' +
+            '<div class="hero-num"><span class="cu" data-to="' + latest.downloads + '">0</span></div>' +
             '<p class="hero-sub">week of ' + fmtRange(latest.weekStart) + '</p>' +
             pill +
-          '</div>' +
+          '</section>' +
           '<div class="stats">' +
-            statCard("Total downloads", num(total), "since " + fmtDay(weeks[0].weekStart)) +
-            statCard("Average / week", num(avg), "across " + weeks.length + " weeks") +
-            statCard("Best week", num(peak.downloads), "week of " + fmtDay(peak.weekStart)) +
-            statCard("Weeks tracked", num(weeks.length), "complete weeks") +
+            statCard("total downloads", total, "since " + fmtDay(weeks[0].weekStart)) +
+            statCard("avg / week", avg, "across " + weeks.length + " weeks") +
+            statCard("best week", peak.downloads, "week of " + fmtDay(peak.weekStart)) +
+            statCard("weeks tracked", weeks.length, "complete weeks") +
           '</div>' +
-          '<div class="chart-card">' +
-            '<h2>Weekly downloads over time</h2>' +
-            '<p class="hint">Each point is one complete Monday–Sunday week.</p>' +
+          '<div class="chart-card reveal">' +
+            '<h2>weekly downloads</h2>' +
+            '<p class="hint">each point = one complete Monday–Sunday week</p>' +
             '<div class="chart-box"><canvas id="chart"></canvas></div>' +
           '</div>';
 
-        // --- chart ---
-        var canvas = document.getElementById("chart");
-        var ctx = canvas.getContext("2d");
-        var gradient = ctx.createLinearGradient(0, 0, 0, 300);
-        gradient.addColorStop(0, "rgba(79, 70, 229, .28)");
-        gradient.addColorStop(1, "rgba(79, 70, 229, 0)");
-
-        new Chart(ctx, {
-          type: "line",
-          data: {
-            labels: weeks.map(function (w) { return fmtDay(w.weekStart); }),
-            datasets: [{
-              data: weeks.map(function (w) { return w.downloads; }),
-              borderColor: "#4f46e5",
-              backgroundColor: gradient,
-              borderWidth: 2.5,
-              fill: true,
-              tension: 0.35,
-              pointRadius: 3,
-              pointHoverRadius: 6,
-              pointBackgroundColor: "#4f46e5",
-              pointBorderColor: "#fff",
-              pointBorderWidth: 2,
-            }],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: { display: false },
-              tooltip: {
-                backgroundColor: "#0f1729",
-                padding: 12,
-                cornerRadius: 8,
-                displayColors: false,
-                callbacks: {
-                  title: function (items) { return "Week of " + fmtRange(weeks[items[0].dataIndex].weekStart); },
-                  label: function (item) { return num(item.parsed.y) + " downloads"; },
-                },
-              },
-            },
-            scales: {
-              y: {
-                beginAtZero: true,
-                grid: { color: "#eef1f6" },
-                ticks: { color: "#94a3b8", precision: 0 },
-                border: { display: false },
-              },
-              x: {
-                grid: { display: false },
-                ticks: { color: "#94a3b8", maxRotation: 0, autoSkip: true, maxTicksLimit: 8 },
-                border: { display: false },
-              },
-            },
-          },
+        // count-up every number
+        [].forEach.call(document.querySelectorAll(".cu"), function (el) {
+          countUp(el, parseInt(el.getAttribute("data-to"), 10));
         });
 
-        // --- footer ---
+        // staggered reveal
+        var items = [].slice.call(document.querySelectorAll(".reveal"));
+        if ("IntersectionObserver" in window && !REDUCED) {
+          var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
+          }, { threshold: .15 });
+          items.forEach(function (el, i) { el.style.transitionDelay = (i * 80) + "ms"; io.observe(el); });
+        } else {
+          items.forEach(function (el) { el.classList.add("in"); });
+        }
+
+        drawChart(weeks);
+
         document.getElementById("footer").innerHTML =
-          '<span class="dot"></span>Last updated ' + new Date(data.lastUpdated).toLocaleString() +
-          ' · Auto-updates daily via GitHub Actions · Source: ' +
-          '<a href="https://api.npmjs.org/downloads/range/last-month/coolhand-cli" target="_blank" rel="noopener">npm downloads API</a>';
+          '<span class="live"></span>last updated ' + new Date(data.lastUpdated).toLocaleString() +
+          ' · auto-updates daily via GitHub Actions · src: ' +
+          '<a href="https://www.npmjs.com/package/coolhand-cli" target="_blank" rel="noopener">npm</a>';
       } catch (err) {
-        app.innerHTML = '<div class="state error">Failed to load metrics: ' + err.message + '</div>';
+        app.innerHTML = '<div class="state error">failed to load metrics: ' + err.message + '</div>';
       }
     }
+
+    function drawChart(weeks) {
+      var ctx = document.getElementById("chart").getContext("2d");
+      var grad = ctx.createLinearGradient(0, 0, 0, 320);
+      grad.addColorStop(0, "rgba(63,185,80,.32)");
+      grad.addColorStop(1, "rgba(63,185,80,0)");
+
+      // soft glow on the line
+      var glow = {
+        id: "glow",
+        beforeDatasetsDraw: function (c) { c.ctx.save(); c.ctx.shadowColor = "rgba(63,185,80,.7)"; c.ctx.shadowBlur = 14; },
+        afterDatasetsDraw: function (c) { c.ctx.restore(); },
+      };
+
+      new Chart(ctx, {
+        type: "line",
+        plugins: [glow],
+        data: {
+          labels: weeks.map(function (w) { return fmtDay(w.weekStart); }),
+          datasets: [{
+            data: weeks.map(function (w) { return w.downloads; }),
+            borderColor: "#3fb950",
+            backgroundColor: grad,
+            borderWidth: 2.5,
+            fill: true,
+            tension: 0.35,
+            pointRadius: 3,
+            pointHoverRadius: 6,
+            pointBackgroundColor: "#3fb950",
+            pointBorderColor: "#0d1117",
+            pointBorderWidth: 2,
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: REDUCED ? false : { duration: 900 },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: "#0d1117",
+              borderColor: "#30363d",
+              borderWidth: 1,
+              titleColor: "#e6edf3",
+              bodyColor: "#3fb950",
+              padding: 12,
+              cornerRadius: 8,
+              displayColors: false,
+              titleFont: { family: "'JetBrains Mono', monospace" },
+              bodyFont: { family: "'JetBrains Mono', monospace" },
+              callbacks: {
+                title: function (i) { return "week of " + fmtRange(weeks[i[0].dataIndex].weekStart); },
+                label: function (i) { return num(i.parsed.y) + " downloads"; },
+              },
+            },
+          },
+          scales: {
+            y: { beginAtZero: true, grid: { color: "rgba(255,255,255,.05)" }, ticks: { color: "#8b949e", precision: 0, font: { family: "'JetBrains Mono', monospace" } }, border: { display: false } },
+            x: { grid: { display: false }, ticks: { color: "#8b949e", maxRotation: 0, autoSkip: true, maxTicksLimit: 8, font: { family: "'JetBrains Mono', monospace" } }, border: { color: "#30363d" } },
+          },
+        },
+      });
+    }
+
     render();
   </script>
 </body>
