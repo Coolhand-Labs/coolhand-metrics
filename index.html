@@ -20,36 +20,27 @@
       --green-dim: rgba(63, 185, 80, .14);
       --red: #f85149;
       --red-dim: rgba(248, 81, 73, .14);
-      --glow: 0 0 0 1px rgba(63,185,80,.18), 0 0 24px rgba(63,185,80,.10);
       --type: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
-      --h1: clamp(1.1rem, 2.4vw, 1.5rem);
       --hero: clamp(3rem, 11vw, 6rem);
-      --stat: clamp(1.5rem, 4vw, 2.2rem);
+      --stat: clamp(1.4rem, 3.6vw, 2.1rem);
     }
     * { box-sizing: border-box; }
     html, body { overflow-x: hidden; }
     body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--ink);
-      font-family: var(--type);
-      line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
+      margin: 0; background: var(--bg); color: var(--ink);
+      font-family: var(--type); line-height: 1.5; -webkit-font-smoothing: antialiased;
     }
-    /* atmospheric layers: faint green glow + subtle scan lines */
     body::before {
       content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
       background: radial-gradient(1100px 460px at 50% -8%, rgba(63,185,80,.12), transparent 70%);
     }
     body::after {
       content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 2;
-      background: repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0 1px, transparent 1px 3px);
-      opacity: .5;
+      background: repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0 1px, transparent 1px 3px); opacity: .5;
     }
     .wrap { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: clamp(20px, 5vw, 48px) 18px 48px; }
 
-    /* terminal window chrome */
     .win { border: 1px solid var(--line); border-radius: 12px; background: linear-gradient(180deg, var(--panel), var(--bg)); box-shadow: 0 24px 60px rgba(0,0,0,.45); overflow: hidden; }
     .win-bar { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.02); }
     .lights { display: inline-flex; gap: 7px; }
@@ -57,7 +48,7 @@
     .lights i:nth-child(1) { background: #ff5f56; }
     .lights i:nth-child(2) { background: #ffbd2e; }
     .lights i:nth-child(3) { background: #27c93f; }
-    .win-title { color: var(--muted); font-size: .78rem; letter-spacing: .02em; flex: 1; text-align: center; }
+    .win-title { color: var(--muted); font-size: .78rem; flex: 1; text-align: center; }
     .npm-badge { background: #cb3837; color: #fff; font-weight: 700; font-size: .68rem; padding: 3px 7px; border-radius: 5px; }
     .win-body { padding: clamp(18px, 4vw, 34px); }
 
@@ -67,7 +58,8 @@
     .cursor { display: inline-block; width: 9px; height: 1.05em; background: var(--green); margin-left: 6px; vertical-align: text-bottom; animation: blink 1.1s steps(1) infinite; box-shadow: 0 0 8px var(--green); }
     @keyframes blink { 50% { opacity: 0; } }
 
-    /* hero */
+    .section-label { color: var(--green); font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; margin: clamp(26px, 5vw, 38px) 0 14px; opacity: .85; }
+
     .eyebrow { color: var(--muted); font-size: .72rem; text-transform: uppercase; letter-spacing: .18em; margin: 0 0 12px; }
     .hero-num { font-size: var(--hero); font-weight: 800; line-height: .95; letter-spacing: -.02em; color: var(--green); text-shadow: 0 0 28px rgba(63,185,80,.45); }
     .hero-sub { color: var(--muted); margin-top: 12px; font-size: .9rem; }
@@ -76,21 +68,24 @@
     .pill.down { color: var(--red); background: var(--red-dim); border-color: rgba(248,81,73,.3); }
     .pill.flat { color: var(--muted); background: rgba(255,255,255,.05); }
 
-    /* stat grid */
-    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin: clamp(24px, 5vw, 38px) 0; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
     .stat { border: 1px solid var(--line); border-radius: 10px; padding: 16px; background: var(--panel-2); position: relative; }
     .stat::before { content: ""; position: absolute; left: 0; top: 12px; bottom: 12px; width: 2px; background: var(--green); border-radius: 2px; opacity: .55; }
     .stat .k { color: var(--muted); font-size: .68rem; text-transform: uppercase; letter-spacing: .1em; margin: 0 0 8px; padding-left: 10px; }
     .stat .v { font-size: var(--stat); font-weight: 700; letter-spacing: -.01em; padding-left: 10px; }
     .stat .v small { display: block; font-size: .68rem; color: var(--muted); font-weight: 400; margin-top: 5px; letter-spacing: 0; }
 
-    /* chart */
     .chart-card { border: 1px solid var(--line); border-radius: 10px; padding: 20px 20px 12px; background: var(--panel-2); }
-    .chart-card h2 { font-size: .85rem; font-weight: 600; margin: 0 0 2px; text-transform: uppercase; letter-spacing: .1em; color: var(--ink); }
-    .chart-card .hint { color: var(--muted); font-size: .74rem; margin: 0 0 16px; }
+    .chart-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    .chart-head h2 { font-size: .85rem; font-weight: 600; margin: 0 0 2px; text-transform: uppercase; letter-spacing: .1em; }
+    .chart-head .hint { color: var(--muted); font-size: .74rem; margin: 0; }
+    .toggle { display: inline-flex; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; }
+    .toggle button { font-family: var(--type); font-size: .74rem; color: var(--muted); background: transparent; border: 0; padding: 6px 13px; cursor: pointer; transition: background .2s, color .2s; }
+    .toggle button.active { background: var(--green-dim); color: var(--green); }
+    .toggle button:not(.active):hover { color: var(--ink); }
     .chart-box { position: relative; height: clamp(220px, 34vh, 320px); }
 
-    footer { margin-top: 22px; color: var(--muted); font-size: .76rem; text-align: center; line-height: 1.8; }
+    footer { margin-top: 24px; color: var(--muted); font-size: .76rem; text-align: center; line-height: 1.8; }
     footer a { color: var(--green); text-decoration: none; }
     footer a:hover { text-decoration: underline; }
     .live { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--green); margin-right: 7px; box-shadow: 0 0 8px var(--green); animation: pulse 2s ease-in-out infinite; }
@@ -99,10 +94,8 @@
     .state { padding: 48px; text-align: center; color: var(--muted); }
     .state.error { color: var(--red); }
 
-    /* reveal-on-enter */
     .reveal { opacity: 0; transform: translateY(14px); transition: opacity .6s ease, transform .6s ease; }
     .reveal.in { opacity: 1; transform: none; }
-
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .2s !important; }
       .reveal { opacity: 1; transform: none; }
@@ -130,7 +123,7 @@
     var REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     function parseUTC(s) { return new Date(s + "T00:00:00Z"); }
-    function fmtDay(s) { return parseUTC(s).toLocaleDateString(undefined, { month: "short", day: "numeric", timeZone: "UTC" }); }
+    function fmtDay(s) { return parseUTC(s.slice(0, 10)).toLocaleDateString(undefined, { month: "short", day: "numeric", timeZone: "UTC" }); }
     function fmtRange(weekStart) {
       var start = parseUTC(weekStart), end = new Date(start);
       end.setUTCDate(end.getUTCDate() + 6);
@@ -139,24 +132,27 @@
     }
     function num(n) { return n.toLocaleString(); }
 
-    // animated count-up; respects reduced motion
     function countUp(el, to) {
       if (REDUCED || to === 0) { el.textContent = num(to); return; }
       var dur = 900, start = null;
       function step(t) {
         if (!start) start = t;
         var p = Math.min((t - start) / dur, 1);
-        var eased = 1 - Math.pow(1 - p, 3); // easeOutCubic
-        el.textContent = num(Math.round(to * eased));
+        el.textContent = num(Math.round(to * (1 - Math.pow(1 - p, 3))));
         if (p < 1) requestAnimationFrame(step);
       }
       requestAnimationFrame(step);
     }
 
-    function statCard(key, value, sub) {
+    // numeric stat (animated count-up) and text stat (rendered as-is)
+    function statNum(key, value, sub) {
       return '<div class="stat reveal"><p class="k">' + key + '</p>' +
              '<div class="v"><span class="cu" data-to="' + value + '">0</span>' +
              (sub ? '<small>' + sub + '</small>' : '') + '</div></div>';
+    }
+    function statText(key, text, sub) {
+      return '<div class="stat reveal"><p class="k">' + key + '</p>' +
+             '<div class="v">' + text + (sub ? '<small>' + sub + '</small>' : '') + '</div></div>';
     }
 
     async function render() {
@@ -166,20 +162,22 @@
         if (!res.ok) throw new Error("could not load data.json");
         var data = await res.json();
         var weeks = data.weeks || [];
+        var demand = data.demand || {};
+        var rel = data.release || null;
 
         if (weeks.length === 0) {
           app.innerHTML = '<div class="state">No download data yet — check back after the next daily update.</div>';
           return;
         }
 
-        // ---- metrics: all derived from the same weekly series, nothing invented ----
+        // ---- DEMAND metrics (all derived from the same data, nothing invented) ----
         var latest = weeks[weeks.length - 1];
         var previous = weeks.length > 1 ? weeks[weeks.length - 2] : null;
         var total = weeks.reduce(function (s, w) { return s + w.downloads; }, 0);
         var avg = Math.round(total / weeks.length);
         var peak = weeks.reduce(function (b, w) { return w.downloads > b.downloads ? w : b; }, weeks[0]);
+        var bw = demand.busiestWeekday || null;
 
-        // ---- week-over-week ----
         var pill = "";
         if (previous && previous.downloads > 0) {
           var diff = latest.downloads - previous.downloads;
@@ -190,6 +188,23 @@
           pill = '<span class="pill ' + cls + '">' + arrow + " " + Math.abs(pct) + "% (" + signed + ") vs prior week</span>";
         }
 
+        // ---- SUPPLY / release section (only if the registry call succeeded) ----
+        var releaseHtml = "";
+        if (rel && rel.version) {
+          var daysSince = rel.lastRelease ? Math.floor((Date.now() - new Date(rel.lastRelease).getTime()) / 86400000) : null;
+          var cadence = (rel.count > 1 && rel.firstRelease && rel.lastRelease)
+            ? Math.round(((new Date(rel.lastRelease) - new Date(rel.firstRelease)) / 86400000 / (rel.count - 1)) * 10) / 10
+            : null;
+          releaseHtml =
+            '<p class="section-label reveal">// release activity</p>' +
+            '<div class="stats">' +
+              statText("current version", "v" + rel.version, rel.firstRelease ? "since " + fmtDay(rel.firstRelease) : "") +
+              (daysSince !== null ? statNum("days since release", daysSince, "last shipped " + fmtDay(rel.lastRelease)) : "") +
+              statNum("total releases", rel.count, "versions published") +
+              (cadence !== null ? statText("ship cadence", cadence + " days", "between releases") : "") +
+            '</div>';
+        }
+
         app.innerHTML =
           '<section class="hero reveal">' +
             '<p class="eyebrow">// downloads · last complete week</p>' +
@@ -197,19 +212,29 @@
             '<p class="hero-sub">week of ' + fmtRange(latest.weekStart) + '</p>' +
             pill +
           '</section>' +
+          '<p class="section-label reveal">// downloads</p>' +
           '<div class="stats">' +
-            statCard("total downloads", total, "since " + fmtDay(weeks[0].weekStart)) +
-            statCard("avg / week", avg, "across " + weeks.length + " weeks") +
-            statCard("best week", peak.downloads, "week of " + fmtDay(peak.weekStart)) +
-            statCard("weeks tracked", weeks.length, "complete weeks") +
+            statNum("total downloads", total, "since " + fmtDay(weeks[0].weekStart)) +
+            (demand.last30Days != null ? statNum("last 30 days", demand.last30Days, "rolling month") : "") +
+            statNum("avg / week", avg, "across " + weeks.length + " weeks") +
+            statNum("best week", peak.downloads, "week of " + fmtDay(peak.weekStart)) +
+            (bw ? statText("busiest weekday", bw.name, num(bw.downloads) + " downloads") : "") +
+            statNum("weeks tracked", weeks.length, "complete weeks") +
           '</div>' +
+          '<p class="section-label reveal">// trend</p>' +
           '<div class="chart-card reveal">' +
-            '<h2>weekly downloads</h2>' +
-            '<p class="hint">each point = one complete Monday–Sunday week</p>' +
+            '<div class="chart-head">' +
+              '<div><h2>downloads over time</h2><p class="hint">each point = one complete Monday–Sunday week</p></div>' +
+              '<div class="toggle">' +
+                '<button type="button" data-view="weekly" class="active">weekly</button>' +
+                '<button type="button" data-view="cumulative">cumulative</button>' +
+              '</div>' +
+            '</div>' +
             '<div class="chart-box"><canvas id="chart"></canvas></div>' +
-          '</div>';
+          '</div>' +
+          releaseHtml;
 
-        // count-up every number
+        // count-up every numeric stat
         [].forEach.call(document.querySelectorAll(".cu"), function (el) {
           countUp(el, parseInt(el.getAttribute("data-to"), 10));
         });
@@ -219,13 +244,25 @@
         if ("IntersectionObserver" in window && !REDUCED) {
           var io = new IntersectionObserver(function (entries) {
             entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
-          }, { threshold: .15 });
-          items.forEach(function (el, i) { el.style.transitionDelay = (i * 80) + "ms"; io.observe(el); });
+          }, { threshold: .12 });
+          items.forEach(function (el, i) { el.style.transitionDelay = Math.min(i * 60, 480) + "ms"; io.observe(el); });
         } else {
           items.forEach(function (el) { el.classList.add("in"); });
         }
 
-        drawChart(weeks);
+        // chart + weekly/cumulative toggle
+        var weeklyData = weeks.map(function (w) { return w.downloads; });
+        var run = 0;
+        var cumulativeData = weeks.map(function (w) { run += w.downloads; return run; });
+        var chart = drawChart(weeks, weeklyData);
+        [].forEach.call(document.querySelectorAll(".toggle button"), function (btn) {
+          btn.addEventListener("click", function () {
+            [].forEach.call(document.querySelectorAll(".toggle button"), function (b) { b.classList.remove("active"); });
+            btn.classList.add("active");
+            chart.data.datasets[0].data = btn.getAttribute("data-view") === "cumulative" ? cumulativeData : weeklyData;
+            chart.update();
+          });
+        });
 
         document.getElementById("footer").innerHTML =
           '<span class="live"></span>last updated ' + new Date(data.lastUpdated).toLocaleString() +
@@ -236,26 +273,25 @@
       }
     }
 
-    function drawChart(weeks) {
+    function drawChart(weeks, values) {
       var ctx = document.getElementById("chart").getContext("2d");
       var grad = ctx.createLinearGradient(0, 0, 0, 320);
       grad.addColorStop(0, "rgba(63,185,80,.32)");
       grad.addColorStop(1, "rgba(63,185,80,0)");
 
-      // soft glow on the line
       var glow = {
         id: "glow",
         beforeDatasetsDraw: function (c) { c.ctx.save(); c.ctx.shadowColor = "rgba(63,185,80,.7)"; c.ctx.shadowBlur = 14; },
         afterDatasetsDraw: function (c) { c.ctx.restore(); },
       };
 
-      new Chart(ctx, {
+      return new Chart(ctx, {
         type: "line",
         plugins: [glow],
         data: {
           labels: weeks.map(function (w) { return fmtDay(w.weekStart); }),
           datasets: [{
-            data: weeks.map(function (w) { return w.downloads; }),
+            data: values,
             borderColor: "#3fb950",
             backgroundColor: grad,
             borderWidth: 2.5,
@@ -275,16 +311,9 @@
           plugins: {
             legend: { display: false },
             tooltip: {
-              backgroundColor: "#0d1117",
-              borderColor: "#30363d",
-              borderWidth: 1,
-              titleColor: "#e6edf3",
-              bodyColor: "#3fb950",
-              padding: 12,
-              cornerRadius: 8,
-              displayColors: false,
-              titleFont: { family: "'JetBrains Mono', monospace" },
-              bodyFont: { family: "'JetBrains Mono', monospace" },
+              backgroundColor: "#0d1117", borderColor: "#30363d", borderWidth: 1,
+              titleColor: "#e6edf3", bodyColor: "#3fb950", padding: 12, cornerRadius: 8, displayColors: false,
+              titleFont: { family: "'JetBrains Mono', monospace" }, bodyFont: { family: "'JetBrains Mono', monospace" },
               callbacks: {
                 title: function (i) { return "week of " + fmtRange(weeks[i[0].dataIndex].weekStart); },
                 label: function (i) { return num(i.parsed.y) + " downloads"; },
