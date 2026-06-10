@@ -3,95 +3,227 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>coolhand-cli — weekly npm downloads</title>
+  <title>coolhand-cli — npm download metrics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
-    body {
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-      max-width: 760px;
-      margin: 40px auto;
-      padding: 0 16px;
-      color: #1a1a1a;
+    :root {
+      --bg: #f4f6fb;
+      --card: #ffffff;
+      --ink: #0f1729;
+      --muted: #64748b;
+      --line: #e6e9f0;
+      --accent: #4f46e5;
+      --up: #0b9b5b;
+      --up-soft: rgba(11, 155, 91, .12);
+      --down: #dc2626;
+      --down-soft: rgba(220, 38, 38, .10);
+      --shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 8px 24px rgba(16, 24, 40, .06);
     }
-    h1 { font-size: 1.4rem; margin-bottom: 4px; }
-    .subtitle { color: #666; margin-top: 0; }
-    .big-number { font-size: 3.5rem; font-weight: 700; line-height: 1; margin: 24px 0 4px; }
-    .label { color: #666; font-size: 0.9rem; }
-    .change { font-size: 1.1rem; margin: 8px 0 24px; }
-    .up { color: #1a7f37; }
-    .down { color: #cf222e; }
-    .flat { color: #666; }
-    .updated { color: #999; font-size: 0.8rem; margin-top: 24px; }
-    .error { color: #cf222e; }
-    canvas { margin-top: 16px; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 40px 20px 56px; }
+
+    header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 26px; flex-wrap: wrap; }
+    .title { display: flex; align-items: center; gap: 12px; }
+    .title h1 { font-size: 1.35rem; margin: 0; letter-spacing: -.01em; }
+    .npm-badge { background: #cb3837; color: #fff; font-weight: 700; font-size: .72rem; padding: 3px 7px; border-radius: 5px; }
+    .subtitle { margin: 3px 0 0; color: var(--muted); font-size: .9rem; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .hero { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 28px; box-shadow: var(--shadow); margin-bottom: 18px; }
+    .eyebrow { color: var(--muted); font-size: .78rem; text-transform: uppercase; letter-spacing: .07em; font-weight: 600; margin: 0 0 10px; }
+    .big { font-size: 3.6rem; font-weight: 800; line-height: 1; letter-spacing: -.03em; }
+    .hero-sub { color: var(--muted); margin-top: 10px; font-size: .95rem; }
+    .pill { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: .9rem; padding: 6px 12px; border-radius: 999px; margin-top: 16px; }
+    .pill.up { color: var(--up); background: var(--up-soft); }
+    .pill.down { color: var(--down); background: var(--down-soft); }
+    .pill.flat { color: var(--muted); background: #eef1f6; }
+
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin-bottom: 18px; }
+    .stat { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px; box-shadow: var(--shadow); }
+    .stat .k { color: var(--muted); font-size: .8rem; font-weight: 600; margin: 0 0 7px; }
+    .stat .v { font-size: 1.6rem; font-weight: 700; letter-spacing: -.02em; }
+    .stat .v small { font-size: .78rem; color: var(--muted); font-weight: 500; display: block; margin-top: 4px; }
+
+    .chart-card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 22px 22px 16px; box-shadow: var(--shadow); }
+    .chart-card h2 { font-size: 1rem; margin: 0 0 3px; }
+    .chart-card .hint { color: var(--muted); font-size: .82rem; margin: 0 0 14px; }
+    .chart-box { position: relative; height: 300px; }
+
+    footer { margin-top: 24px; color: var(--muted); font-size: .82rem; text-align: center; line-height: 1.7; }
+    .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--up); margin-right: 6px; vertical-align: middle; }
+    .state { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 40px; text-align: center; color: var(--muted); box-shadow: var(--shadow); }
+    .state.error { color: var(--down); }
   </style>
 </head>
 <body>
-  <h1>coolhand-cli</h1>
-  <p class="subtitle">Weekly npm downloads — a proxy for skill adoption. Updates daily.</p>
+  <div class="wrap">
+    <header>
+      <div class="title">
+        <span class="npm-badge">npm</span>
+        <div>
+          <h1>coolhand-cli</h1>
+          <p class="subtitle">Weekly download metrics — a proxy for skill adoption.</p>
+        </div>
+      </div>
+      <a href="https://www.npmjs.com/package/coolhand-cli" target="_blank" rel="noopener">View on npm →</a>
+    </header>
 
-  <div id="content">Loading…</div>
+    <div id="app"><div class="state">Loading metrics…</div></div>
 
-  <canvas id="chart" height="160"></canvas>
-
-  <p class="updated" id="updated"></p>
+    <footer id="footer"></footer>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
   <script>
-    async function render() {
-      const content = document.getElementById("content");
-      try {
-        const res = await fetch("./data.json", { cache: "no-store" });
-        if (!res.ok) throw new Error("could not load data.json");
+    function parseUTC(dateStr) {
+      return new Date(dateStr + "T00:00:00Z");
+    }
+    function fmtDay(dateStr) {
+      return parseUTC(dateStr).toLocaleDateString(undefined, { month: "short", day: "numeric", timeZone: "UTC" });
+    }
+    function fmtRange(weekStart) {
+      var start = parseUTC(weekStart);
+      var end = new Date(start);
+      end.setUTCDate(end.getUTCDate() + 6);
+      var opts = { month: "short", day: "numeric", timeZone: "UTC" };
+      return start.toLocaleDateString(undefined, opts) + " – " + end.toLocaleDateString(undefined, opts);
+    }
+    function num(n) {
+      return n.toLocaleString();
+    }
 
-        const data = await res.json();
-        const weeks = data.weeks || [];
+    function statCard(key, value, sub) {
+      return '<div class="stat"><p class="k">' + key + '</p>' +
+             '<div class="v">' + value + (sub ? '<small>' + sub + '</small>' : '') + '</div></div>';
+    }
+
+    async function render() {
+      var app = document.getElementById("app");
+      try {
+        var res = await fetch("./data.json", { cache: "no-store" });
+        if (!res.ok) throw new Error("could not load data.json");
+        var data = await res.json();
+        var weeks = data.weeks || [];
+
         if (weeks.length === 0) {
-          content.innerHTML = '<p class="error">No download data yet.</p>';
+          app.innerHTML = '<div class="state">No download data yet — check back after the next daily update.</div>';
           return;
         }
 
-        const latest = weeks[weeks.length - 1];
-        const previous = weeks.length > 1 ? weeks[weeks.length - 2] : null;
+        // --- metrics (all derived from the same weekly series, nothing invented) ---
+        var latest = weeks[weeks.length - 1];
+        var previous = weeks.length > 1 ? weeks[weeks.length - 2] : null;
+        var total = weeks.reduce(function (sum, w) { return sum + w.downloads; }, 0);
+        var avg = Math.round(total / weeks.length);
+        var peak = weeks.reduce(function (best, w) { return w.downloads > best.downloads ? w : best; }, weeks[0]);
 
-        let changeHtml = "";
+        // --- week-over-week pill ---
+        var pill = "";
         if (previous && previous.downloads > 0) {
-          const pct = ((latest.downloads - previous.downloads) / previous.downloads) * 100;
-          const rounded = Math.round(pct * 10) / 10;
-          const cls = rounded > 0 ? "up" : rounded < 0 ? "down" : "flat";
-          const arrow = rounded > 0 ? "▲" : rounded < 0 ? "▼" : "→";
-          changeHtml =
-            '<p class="change ' + cls + '">' + arrow + " " +
-            Math.abs(rounded) + "% vs previous week</p>";
+          var diff = latest.downloads - previous.downloads;
+          var pct = Math.round((diff / previous.downloads) * 1000) / 10;
+          var cls = diff > 0 ? "up" : diff < 0 ? "down" : "flat";
+          var arrow = diff > 0 ? "▲" : diff < 0 ? "▼" : "—";
+          var signed = (diff >= 0 ? "+" : "") + num(diff);
+          pill = '<span class="pill ' + cls + '">' + arrow + " " + Math.abs(pct) + "% (" + signed + ") vs prior week</span>";
+        } else if (previous) {
+          pill = '<span class="pill flat">— no prior-week baseline</span>';
         }
 
-        content.innerHTML =
-          '<div class="big-number">' + latest.downloads.toLocaleString() + "</div>" +
-          '<div class="label">downloads in the week of ' + latest.weekStart + "</div>" +
-          changeHtml;
+        // --- build the page ---
+        app.innerHTML =
+          '<div class="hero">' +
+            '<p class="eyebrow">Downloads last complete week</p>' +
+            '<div class="big">' + num(latest.downloads) + '</div>' +
+            '<p class="hero-sub">week of ' + fmtRange(latest.weekStart) + '</p>' +
+            pill +
+          '</div>' +
+          '<div class="stats">' +
+            statCard("Total downloads", num(total), "since " + fmtDay(weeks[0].weekStart)) +
+            statCard("Average / week", num(avg), "across " + weeks.length + " weeks") +
+            statCard("Best week", num(peak.downloads), "week of " + fmtDay(peak.weekStart)) +
+            statCard("Weeks tracked", num(weeks.length), "complete weeks") +
+          '</div>' +
+          '<div class="chart-card">' +
+            '<h2>Weekly downloads over time</h2>' +
+            '<p class="hint">Each point is one complete Monday–Sunday week.</p>' +
+            '<div class="chart-box"><canvas id="chart"></canvas></div>' +
+          '</div>';
 
-        document.getElementById("updated").textContent =
-          "Last updated: " + new Date(data.lastUpdated).toLocaleString();
+        // --- chart ---
+        var canvas = document.getElementById("chart");
+        var ctx = canvas.getContext("2d");
+        var gradient = ctx.createLinearGradient(0, 0, 0, 300);
+        gradient.addColorStop(0, "rgba(79, 70, 229, .28)");
+        gradient.addColorStop(1, "rgba(79, 70, 229, 0)");
 
-        new Chart(document.getElementById("chart"), {
+        new Chart(ctx, {
           type: "line",
           data: {
-            labels: weeks.map(function (w) { return w.weekStart; }),
+            labels: weeks.map(function (w) { return fmtDay(w.weekStart); }),
             datasets: [{
-              label: "Weekly downloads",
               data: weeks.map(function (w) { return w.downloads; }),
-              borderColor: "#1a7f37",
-              backgroundColor: "rgba(26,127,55,0.1)",
+              borderColor: "#4f46e5",
+              backgroundColor: gradient,
+              borderWidth: 2.5,
               fill: true,
-              tension: 0.2,
+              tension: 0.35,
+              pointRadius: 3,
+              pointHoverRadius: 6,
+              pointBackgroundColor: "#4f46e5",
+              pointBorderColor: "#fff",
+              pointBorderWidth: 2,
             }],
           },
           options: {
-            scales: { y: { beginAtZero: true } },
-            plugins: { legend: { display: false } },
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                backgroundColor: "#0f1729",
+                padding: 12,
+                cornerRadius: 8,
+                displayColors: false,
+                callbacks: {
+                  title: function (items) { return "Week of " + fmtRange(weeks[items[0].dataIndex].weekStart); },
+                  label: function (item) { return num(item.parsed.y) + " downloads"; },
+                },
+              },
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                grid: { color: "#eef1f6" },
+                ticks: { color: "#94a3b8", precision: 0 },
+                border: { display: false },
+              },
+              x: {
+                grid: { display: false },
+                ticks: { color: "#94a3b8", maxRotation: 0, autoSkip: true, maxTicksLimit: 8 },
+                border: { display: false },
+              },
+            },
           },
         });
+
+        // --- footer ---
+        document.getElementById("footer").innerHTML =
+          '<span class="dot"></span>Last updated ' + new Date(data.lastUpdated).toLocaleString() +
+          ' · Auto-updates daily via GitHub Actions · Source: ' +
+          '<a href="https://api.npmjs.org/downloads/range/last-month/coolhand-cli" target="_blank" rel="noopener">npm downloads API</a>';
       } catch (err) {
-        content.innerHTML = '<p class="error">Failed to load data: ' + err.message + "</p>";
+        app.innerHTML = '<div class="state error">Failed to load metrics: ' + err.message + '</div>';
       }
     }
     render();
