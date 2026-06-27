@@ -1,6 +1,6 @@
 {
   "package": "coolhand-cli",
-  "lastUpdated": "2026-06-26T07:12:20.038Z",
+  "lastUpdated": "2026-06-27T07:00:13.333Z",
   "weeks": [
     {
       "weekStart": "2026-05-11",
@@ -28,7 +28,7 @@
     }
   ],
   "demand": {
-    "last30Days": 615,
+    "last30Days": 623,
     "busiestWeekday": {
       "name": "Wednesday",
       "downloads": 289
