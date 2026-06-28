@@ -1,6 +1,6 @@
 {
   "package": "coolhand-cli",
-  "lastUpdated": "2026-06-27T07:00:13.333Z",
+  "lastUpdated": "2026-06-28T07:16:18.448Z",
   "weeks": [
     {
       "weekStart": "2026-05-11",
@@ -28,16 +28,16 @@
     }
   ],
   "demand": {
-    "last30Days": 623,
+    "last30Days": 801,
     "busiestWeekday": {
-      "name": "Wednesday",
-      "downloads": 289
+      "name": "Saturday",
+      "downloads": 302
     }
   },
   "release": {
-    "version": "0.5.1",
+    "version": "0.5.2",
     "firstRelease": "2026-05-17T20:09:35.135Z",
-    "lastRelease": "2026-06-25T21:02:33.748Z",
-    "count": 7
+    "lastRelease": "2026-06-27T15:18:26.202Z",
+    "count": 8
   }
 }
